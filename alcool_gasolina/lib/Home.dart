@@ -6,63 +6,114 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  TextEditingController _controllerAlcool = TextEditingController();
+  TextEditingController _controllerGasolina = TextEditingController();
+  String _textoResultado = "";
+
+  void _calcular() {
+    double precoAlcool = double.tryParse(_controllerAlcool.text);
+    double precoGasolina = double.tryParse(_controllerGasolina.text);
+
+    if(precoAlcool == null || precoGasolina == null) {
+      setState(() {
+        _textoResultado = "Número inválido, digite números maiores que zero e utilizando (.)";
+      });
+    } else {
+      if((precoAlcool / precoGasolina) >= 0.7) {
+        setState(() {
+          _textoResultado = "Melhor abastecer com gasolina";
+        });
+      } else {
+        setState(() {
+          _textoResultado = "Melhor abastecer com alcool";
+        });
+      }
+    }
+    _limparCampos();
+  }
+
+  void _limparCampos() {
+    setState(() {
+      _controllerAlcool.text = "";
+      _controllerGasolina.text = "";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Álcool ou Gasolina"),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(30),
-        child: Column(
-          children: <Widget>[
-            Image.asset("images/logo.png"),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 30),
-              child: Text("Saiba qual a melhor opção para abastecimento do seu carro",
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold
-                ),
-                textAlign: TextAlign.left,
-              )
-            ),
-            TextField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: "Preço Alcool, ex. 1.59",
-                labelStyle: TextStyle(
-                  fontSize: 20
-                )
+      body: Container(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 32),
+                child: Image.asset("images/logo.png"),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: TextField(
+              Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: Text("Saiba qual a melhor opção para abastecimento do seu carro",
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold
+                    ),
+                    textAlign: TextAlign.left,
+                  )
+              ),
+              TextField(
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: "Preço Gasolina, ex. 3.15",
-                  labelStyle: TextStyle(
-                    fontSize: 20
-                  )
+                    labelText: "Preço Alcool, ex. 1.59",
+                    labelStyle: TextStyle(
+                        fontSize: 22
+                    )
+                ),
+                controller: _controllerAlcool,
+              ),
+              TextField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                    labelText: "Preço Gasolina, ex. 3.15",
+                    labelStyle: TextStyle(
+                        fontSize: 22
+                    )
+                ),
+                controller: _controllerGasolina,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: RaisedButton(
+                    color: Colors.lightBlue,
+                    textColor: Colors.white,
+                    padding: EdgeInsets.all(15),
+                    child: Text("Calcular",
+                      style: TextStyle(
+                          fontSize: 20
+                      ),
+                    ),
+                    onPressed: () {
+                      _calcular();
+                    }
                 ),
               ),
-            ),
-            RaisedButton(
-              onPressed: () {},
-              color: Colors.lightBlue,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20, bottom: 20, left: 125, right: 125),
-                child: Text("Calcular",
+              Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: Text(
+                  _textoResultado,
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold
                   ),
                 ),
-              ),
-            )
-          ],
-        ),
+              )
+            ],
+          ),
+        )
       ),
     );
   }
